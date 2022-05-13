@@ -1,5 +1,6 @@
 import express, { Application } from 'express'
 import db from '../db/connection';
+import User from './user.model';
 
 class Server {
 
@@ -16,6 +17,7 @@ class Server {
   async dbConnection() {
     try {
       await db.authenticate();
+      await User.sync({ force: true });
       console.log('Connection has been established successfully.');
     } catch (error) {
       console.error('Unable to connect to the database:', error);
