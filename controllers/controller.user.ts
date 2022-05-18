@@ -1,26 +1,44 @@
 import { Request, Response } from "express";
+import User from "../models/user.model";
 
-export const getUsers = (req: Request, res: Response) => {
+export const getUsers = async (req: Request, res: Response) => {
+  const users = await User.findAll();
+
   res.json({
-    msg: 'get users'
+    msg: 'get users',
+    users: users
   })
 }
 
-export const getUser = (req: Request, res: Response) => {
+export const getUser = async (req: Request, res: Response) => {
   const { id } = req.params
+  const user = await User.findOne({ where: { id: parseInt(id) } });
 
   res.json({
-    msg: 'get users'
+    msg: 'get user from ' + id,
+    user: user
   })
 }
 
-export const createUser = (req: Request, res: Response) => {
+export const createUser = async (req: Request, res: Response) => {
   const { body } = req
 
-  res.json({
-    msg: 'create User',
-    body
-  })
+  try {
+
+    const user = new User(body)
+    await user.save()
+
+    res.json({
+      msg: 'create User',
+      user
+    })
+  } catch (e) {
+    console.log(e);
+    
+    res.status(500).json({
+      msg: 'error create user',
+    })
+  }
 }
 
 export const updateUser = (req: Request, res: Response) => {
